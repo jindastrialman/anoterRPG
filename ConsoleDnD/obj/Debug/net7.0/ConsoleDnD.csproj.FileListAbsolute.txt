@@ -1,0 +1,17 @@
+C:\Users\CKORD\source\repos\ConsoleDnD\bin\Debug\net7.0\ConsoleDnD.exe
+C:\Users\CKORD\source\repos\ConsoleDnD\bin\Debug\net7.0\ConsoleDnD.deps.json
+C:\Users\CKORD\source\repos\ConsoleDnD\bin\Debug\net7.0\ConsoleDnD.runtimeconfig.json
+C:\Users\CKORD\source\repos\ConsoleDnD\bin\Debug\net7.0\ConsoleDnD.dll
+C:\Users\CKORD\source\repos\ConsoleDnD\bin\Debug\net7.0\ConsoleDnD.pdb
+C:\Users\CKORD\source\repos\ConsoleDnD\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\CKORD\source\repos\ConsoleDnD\obj\Debug\net7.0\ConsoleDnD.csproj.AssemblyReference.cache
+C:\Users\CKORD\source\repos\ConsoleDnD\obj\Debug\net7.0\ConsoleDnD.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\CKORD\source\repos\ConsoleDnD\obj\Debug\net7.0\ConsoleDnD.AssemblyInfoInputs.cache
+C:\Users\CKORD\source\repos\ConsoleDnD\obj\Debug\net7.0\ConsoleDnD.AssemblyInfo.cs
+C:\Users\CKORD\source\repos\ConsoleDnD\obj\Debug\net7.0\ConsoleDnD.csproj.CoreCompileInputs.cache
+C:\Users\CKORD\source\repos\ConsoleDnD\obj\Debug\net7.0\ConsoleDnD.csproj.CopyComplete
+C:\Users\CKORD\source\repos\ConsoleDnD\obj\Debug\net7.0\ConsoleDnD.dll
+C:\Users\CKORD\source\repos\ConsoleDnD\obj\Debug\net7.0\refint\ConsoleDnD.dll
+C:\Users\CKORD\source\repos\ConsoleDnD\obj\Debug\net7.0\ConsoleDnD.pdb
+C:\Users\CKORD\source\repos\ConsoleDnD\obj\Debug\net7.0\ConsoleDnD.genruntimeconfig.cache
+C:\Users\CKORD\source\repos\ConsoleDnD\obj\Debug\net7.0\ref\ConsoleDnD.dll
