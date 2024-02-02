@@ -1,10 +1,5 @@
 ﻿using ConsoleDnD.Framework.Common;
-using ConsoleDnD.Framework.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace ConsoleDnD.Extensions.ConsoleShell
 {
@@ -14,7 +9,7 @@ namespace ConsoleDnD.Extensions.ConsoleShell
         {
             Console.WriteLine(message);
         }
-        public static IEnumerable<object> ChangeCollection(IEnumerable<object> objects)
+        public static IEnumerable<T> ChangeCollection<T>(IEnumerable<T> objects)
         {
             while (true)
             {
@@ -43,13 +38,53 @@ namespace ConsoleDnD.Extensions.ConsoleShell
             }
 
         }
-        private static IEnumerable<object> CreateNew(IEnumerable<object> objects)
+        private static IEnumerable<T> CreateNew<T>(IEnumerable<T> objects)
         {
-            var objType = objects.FirstOrDefault().GetType();
+            var objType = typeof(T);
+
+            ConstructorInfo ctor = objType.GetConstructor(new Type[0]);
+            var newObject = ctor.Invoke(null);
+
+            foreach (var field in objType.GetProperties())
+            {
+                Console.WriteLine($"заполните поле {field.Name} типа {field.PropertyType.Name}");
+                if (field.PropertyType == typeof(string))
+                {
+                    var loadedValue = Console.ReadLine();
+                    field.SetValue(newObject, loadedValue);
+                    continue;
+                }
+
+                if (field.PropertyType.IsValueType)
+                {
+                    var loadedValue = Console.ReadLine();
+                    var fieldType = field.PropertyType;
+                    try
+                    {
+                        //this one is trying to call parse for ints, doubles or other types (definetely will break if it is value type without parse)
+                        var converted = fieldType.GetMethods()
+                                                 .Where(x => x.Name == "Parse" && x.GetParameters().Length == 1)
+                                                 .Single().Invoke(null, new object[1] { loadedValue });
+
+                        field.SetValue(newObject, converted);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
+
+                    continue;
+                }
+                if (field.PropertyType.GetInterfaces().Any(i => i.Name == typeof(ICollection<>).Name))
+                {
+                    Console.WriteLine("ещё не работает");
+                }
+                Console.WriteLine("что-то странное, непонятное");
+            }
 
             Console.WriteLine(objType);
 
-            return objects;
+            return objects.Append((T)newObject);
         }
 
         private enum MenuAction
