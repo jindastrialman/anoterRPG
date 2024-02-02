@@ -41,6 +41,8 @@ namespace ConsoleDnD.Extensions.ConsoleShell.PluginExtensions.Dnd
                         _plugin.Characters = MessagePrinter.ChangeCollection(_plugin.Characters).Cast<DnDCharacter>().ToList();
                         break;
                 }
+
+                _plugin.SaveChanges();
             }
         }
         private enum MenuItem

@@ -1,4 +1,5 @@
 ﻿using ConsoleDnD.Framework.Common;
+using Microsoft.VisualBasic.FileIO;
 using System.Reflection;
 
 namespace ConsoleDnD.Extensions.ConsoleShell
@@ -26,17 +27,28 @@ namespace ConsoleDnD.Extensions.ConsoleShell
                 switch (action)
                 {
                     case MenuAction.ModifyAndRead:
-
+                        objects = ModifyAndRead(objects);
                         break;
                     case MenuAction.Create:
                         objects = CreateNew(objects);
                         break;
                     case MenuAction.Delete:
-
+                        objects = Delete(objects);
                         break;
                 }
             }
 
+        }
+        private static IEnumerable<T> ModifyAndRead<T>(IEnumerable<T> objects)
+        {
+
+            while (true)
+            {
+                var selectedToDelete = (T)SelectPaged(objects.Cast<object>());
+                if (selectedToDelete is null) return objects;
+
+                objects = objects.Where(x => !x.Equals(selectedToDelete));
+            }
         }
         private static IEnumerable<T> CreateNew<T>(IEnumerable<T> objects)
         {
@@ -48,43 +60,63 @@ namespace ConsoleDnD.Extensions.ConsoleShell
             foreach (var field in objType.GetProperties())
             {
                 Console.WriteLine($"заполните поле {field.Name} типа {field.PropertyType.Name}");
-                if (field.PropertyType == typeof(string))
+                string inputValue;
+
+                if (field.PropertyType.Name == typeof(ICollection<>).Name)
                 {
-                    var loadedValue = Console.ReadLine();
-                    field.SetValue(newObject, loadedValue);
+                    Console.WriteLine($"Введите пустую строку, чтобы закончить добавление новых элементов");
+
+                    do
+                    {
+                        inputValue = Console.ReadLine();
+                        var methodInfo = field.PropertyType.GetMethods().Where(x => x.Name == "Add").Single();
+                        methodInfo.Invoke(field.GetValue(newObject), new object[1] { ConvertConsoleInputToType(inputValue, field.PropertyType.GenericTypeArguments.First()) });
+                    }
+                    while (inputValue != "");
+
                     continue;
                 }
 
-                if (field.PropertyType.IsValueType)
+                inputValue = Console.ReadLine();
+                try
                 {
-                    var loadedValue = Console.ReadLine();
-                    var fieldType = field.PropertyType;
-                    try
-                    {
-                        //this one is trying to call parse for ints, doubles or other types (definetely will break if it is value type without parse)
-                        var converted = fieldType.GetMethods()
-                                                 .Where(x => x.Name == "Parse" && x.GetParameters().Length == 1)
-                                                 .Single().Invoke(null, new object[1] { loadedValue });
-
-                        field.SetValue(newObject, converted);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-
-                    continue;
+                    field.SetValue(newObject, ConvertConsoleInputToType(inputValue, field.PropertyType));
                 }
-                if (field.PropertyType.GetInterfaces().Any(i => i.Name == typeof(ICollection<>).Name))
+                catch (Exception ex)
                 {
-                    Console.WriteLine("ещё не работает");
+                    Console.WriteLine("что-то сломалось, надо заново всё делать");
+                    return objects;
                 }
-                Console.WriteLine("что-то странное, непонятное");
             }
 
-            Console.WriteLine(objType);
-
             return objects.Append((T)newObject);
+        }
+
+        private static object? ConvertConsoleInputToType(string inputString, Type type)
+        {
+            if (type == typeof(string))
+            {
+                return inputString;
+            }
+
+            if (type.IsValueType)
+            {
+                return type.GetMethods()
+                       .Where(x => x.Name == "Parse" && x.GetParameters().Length == 1)
+                       .Single().Invoke(null, new object[1] { inputString });
+            }
+
+            return null;
+        }
+        private static IEnumerable<T> Delete<T>(IEnumerable<T> objects)
+        {
+            while (true)
+            {
+                var selectedToDelete = (T)SelectPaged(objects.Cast<object>());
+                if (selectedToDelete is null) return objects;
+
+                objects = objects.Where(x => !x.Equals(selectedToDelete));
+            }
         }
 
         private enum MenuAction
